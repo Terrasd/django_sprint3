@@ -5,7 +5,7 @@ from blog.models import Post, Category
 from blog.constants import COUNT_OF_POSTS_ON_HOMEPAGE
 
 
-# функция для получения постов (запроса к бд)
+# функция для получения queryset постов (запроса к бд)
 def get_queryset_posts():
     return Post.objects.select_related(
         'category', 'location', 'author'
