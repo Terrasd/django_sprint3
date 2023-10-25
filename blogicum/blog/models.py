@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from blog.constants import MAX_LENGTH_FOR_CHARFIELDS
+from blog.constants import MAX_LENGTH_FOR_CHARFIELDS, CONST_TRUNCATECHAR
 
 User = get_user_model()
 
@@ -10,11 +10,12 @@ class PublishedCreatedModel(models.Model):
     """
     Абстрактный класс для описывания статуса и времени публикации.
     Метод "truncate" возвращает обрезанную строку с "..." на конце
-    (метод обрезает после 15 символа).
+    (длина обрезки задается константой CONST_TRUNCATECHAR).
     """
 
     def truncate(self, text):
-        return (text if len(text) < 16 else text[:15] + '...')
+        return (text if len(text) < CONST_TRUNCATECHAR + 1
+                else text[:CONST_TRUNCATECHAR] + '...')
 
     is_published = models.BooleanField(
         default=True,
@@ -94,7 +95,7 @@ class Post(PublishedCreatedModel):
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор публикации',
-        related_name='author'
+        related_name='authors'
     )
     location = models.ForeignKey(
         Location,
@@ -102,14 +103,14 @@ class Post(PublishedCreatedModel):
         null=True,
         blank=True,
         verbose_name='Местоположение',
-        related_name='location'
+        related_name='locations'
     )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         null=True,
         verbose_name='Категория',
-        related_name='category'
+        related_name='categories'
     )
 
     class Meta:
